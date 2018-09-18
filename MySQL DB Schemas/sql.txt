@@ -1,0 +1,289 @@
+DROP DATABASE IF EXISTS `arlington_auto` ;
+CREATE DATABASE  IF NOT EXISTS `arlington_auto` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `arlington_auto`;
+DROP TABLE IF EXISTS `car`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `car` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(15) COLLATE utf8_bin NOT NULL,
+  `capacity` tinyint(1) NOT NULL,
+  `weekday_rate` decimal(13,2) NOT NULL,
+  `weekend_rate` decimal(13,2) NOT NULL,
+  `weekly_rate` decimal(13,2) NOT NULL,
+  `daily_gps` decimal(13,2) NOT NULL,
+  `daily_onstar` decimal(13,2) NOT NULL,
+  `daily_sirius` decimal(13,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idname_UNIQUE` (`name`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+ALTER TABLE car AUTO_INCREMENT=1;
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `utaid` char(10) COLLATE utf8_bin NOT NULL,
+  `username` varchar(16) COLLATE utf8_bin NOT NULL,
+  `first_name` varchar(50) COLLATE utf8_bin NOT NULL,
+  `last_name` varchar(50) COLLATE utf8_bin NOT NULL,
+  `password` varchar(16) COLLATE utf8_bin NOT NULL,
+  `email` varchar(45) COLLATE utf8_bin NOT NULL,
+  `aacmembership` tinyint(1) NOT NULL DEFAULT '0',
+  `role` varchar(15) COLLATE utf8_bin NOT NULL DEFAULT 'customer',
+  `isrevoked` tinyint(1) NOT NULL DEFAULT '0',
+  `age` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `username_UNIQUE` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+ALTER TABLE user AUTO_INCREMENT=1;
+DROP TABLE IF EXISTS `payment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `payment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `name_on_card` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT 'Allow null, if null then the name on card is user.first + ‘ ‘ +user.last, therefore on web page add check box “use same name as person making reservation”',
+  `card_number` char(16) COLLATE utf8_bin NOT NULL,
+  `card_expires` date NOT NULL,
+  `card_security_code` char(3) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  CONSTRAINT `fk_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+ALTER TABLE payment AUTO_INCREMENT=1;
+DROP TABLE IF EXISTS `reservation`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `reservation` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `car_id` int(11) NOT NULL,
+  `payment_id` int(11) NOT NULL,
+  `start_time` datetime NOT NULL,
+  `end_time` datetime NOT NULL,
+  `hasgps` tinyint(1) NOT NULL DEFAULT '0',
+  `hasonstar` tinyint(1) NOT NULL DEFAULT '0',
+  `hassirius` tinyint(1) NOT NULL DEFAULT '0',
+  `iscanceled` tinyint(1) NOT NULL DEFAULT '0',
+  `isdeleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  KEY `fk_car_idx` (`car_id`),
+  KEY `fk_payment_idx` (`payment_id`),
+  CONSTRAINT `fk_car` FOREIGN KEY (`car_id`) REFERENCES `car` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_payment` FOREIGN KEY (`payment_id`) REFERENCES `payment` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+ALTER TABLE reservation AUTO_INCREMENT=1;
+
+INSERT INTO car(name,Capacity,weekday_rate,weekend_rate,weekly_rate,daily_gps,daily_onstar,daily_sirius) VALUES ('Smart',1,'32.99','37.99','230.93','3.00','5.00','7.00');
+INSERT INTO car(name,Capacity,weekday_rate,weekend_rate,weekly_rate,daily_gps,daily_onstar,daily_sirius) VALUES ('Economy',3,'39.99','44.99','279.93','3.00','5.00','7.00');
+INSERT INTO car(name,Capacity,weekday_rate,weekend_rate,weekly_rate,daily_gps,daily_onstar,daily_sirius) VALUES ('Compact',4,'44.99','49.99','314.93','3.00','5.00','7.00');
+INSERT INTO car(name,Capacity,weekday_rate,weekend_rate,weekly_rate,daily_gps,daily_onstar,daily_sirius) VALUES ('Intermediate',4,'45.99','50.99','321.93','3.00','5.00','7.00');
+INSERT INTO car(name,Capacity,weekday_rate,weekend_rate,weekly_rate,daily_gps,daily_onstar,daily_sirius) VALUES ('Standard',5,'48.99','53.99','342.93','3.00','5.00','7.00');
+INSERT INTO car(name,Capacity,weekday_rate,weekend_rate,weekly_rate,daily_gps,daily_onstar,daily_sirius) VALUES ('Full Size',6,'52.99','57.99','370.93','3.00','5.00','7.00');
+INSERT INTO car(name,Capacity,weekday_rate,weekend_rate,weekly_rate,daily_gps,daily_onstar,daily_sirius) VALUES ('SUV',8,'59.99','64.99','419.93','3.00','5.00','7.00');
+INSERT INTO car(name,Capacity,weekday_rate,weekend_rate,weekly_rate,daily_gps,daily_onstar,daily_sirius) VALUES ('MiniVan',9,'59.99','64.99','419.93','3.00','5.00','7.00');
+INSERT INTO car(name,Capacity,weekday_rate,weekend_rate,weekly_rate,daily_gps,daily_onstar,daily_sirius) VALUES ('Ultra Sports',2,'199.99','204.99','1399.93','5.00','7.00','9.00');
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('6206385835', 'mrushworth0', 'Maurizia', 'Rushworth', 'zuPjJdUyWZzg', 'mrushworth0@example.com', false, 'customer', false, 19);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('6275871560', 'vmacpike1', 'Venus', 'MacPike', 'azeVmR7Sp', 'vmacpike1@ehow.com', false, 'customer', false, 17);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('7344104372', 'rdarwent2', 'Roby', 'Darwent', 'fZqgRGavTAo6', 'rdarwent2@wunderground.com', false, 'customer', false, 24);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('8990864395', 'jaldington3', 'Josy', 'Aldington', 'qsUz3nyaQ', 'jaldington3@who.int', false, 'customer', false, 18);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('6310500687', 'vreasce4', 'Vincenty', 'Reasce', 'yh8UQUHTN9', 'vreasce4@umn.edu', false, 'customer', false, 16);
+
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('7852159801', 'nmengo0', 'Niko', 'Mengo', 'PyyXOaEGvIA', 'nmengo0@github.com', false, 'customer', false, 26);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('8430681568', 'khartley1', 'Kellyann', 'Hartley', 'PocYfv1', 'khartley1@state.gov', false, 'customer', false, 62);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('9582568833', 'awearden2', 'Angeli', 'Wearden', 'Xh2QjAVgAShx', 'awearden2@noaa.gov', false, 'customer', false, 28);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('2785801726', 'njozefczak3', 'Nicolas', 'Jozefczak', '7Ba34Qpp', 'njozefczak3@mayoclinic.com', false, 'customer', false, 41);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('8810324394', 'lshemelt4', 'Laurie', 'Shemelt', 'YRXx3TLe', 'lshemelt4@toplist.cz', false, 'customer', false, 66);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('1254860073', 'vedelston5', 'Vasili', 'Edelston', 'T0JZZudwxn', 'vedelston5@creativecommons.org', false, 'customer', false, 52);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('9272905520', 'brosnau6', 'Blakeley', 'Rosnau', 'g7PoM7I', 'brosnau6@gmpg.org', false, 'customer', false, 51);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('2470017140', 'mausten7', 'Moss', 'Austen', 'a5hUJ6X', 'mausten7@xinhuanet.com', false, 'customer', false, 63);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('1105680729', 'dtemplman8', 'Dudley', 'Templman', 'OpCaBoDhRau', 'dtemplman8@domainmarket.com', false, 'customer', false, 67);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('6353858598', 'cmcalister9', 'Carroll', 'McAlister', 'eda5sJzm', 'cmcalister9@elpais.com', false, 'customer', false, 69);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('4119702974', 'dheinekea', 'Domeniga', 'Heineke', 'SCLcrSwMmtC', 'dheinekea@gravatar.com', false, 'customer', false, 67);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('2051084238', 'sbeynb', 'Schuyler', 'Beyn', '1vmu67hsqATU', 'sbeynb@nifty.com', false, 'customer', false, 41);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('7856192462', 'lpaultonc', 'Lynn', 'Paulton', '8SoNnGHrxA', 'lpaultonc@blinklist.com', false, 'customer', false, 70);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('2583376306', 'dtukelyd', 'Doyle', 'Tukely', 'd9QzIg', 'dtukelyd@go.com', false, 'customer', false, 56);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('5926106534', 'crossonie', 'Carina', 'Rossoni', 'MEIOV51lS', 'crossonie@upenn.edu', false, 'customer', false, 28);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('4702247983', 'amoldf', 'Amerigo', 'Mold', 'MMJikw5jWk8X', 'amoldf@sciencedaily.com', false, 'customer', false, 65);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('5694158134', 'mgeaneyg', 'Marlane', 'Geaney', '9ALeG1sC7Ng', 'mgeaneyg@paginegialle.it', false, 'customer', false, 58);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('4287050389', 'edeavilleh', 'Edgard', 'Deaville', 'xZX5Flsn', 'edeavilleh@noaa.gov', false, 'customer', false, 43);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('5514266804', 'hsimmilli', 'Hertha', 'Simmill', 'j1eMfld9', 'hsimmilli@nps.gov', false, 'customer', false, 48);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('8369475310', 'bburkettj', 'Blondelle', 'Burkett', 'jebHfU', 'bburkettj@timesonline.co.uk', false, 'customer', false, 35);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('7741766916', 'ystowek', 'Yolanthe', 'Stowe', 'JfZLkFputW8', 'ystowek@sciencedaily.com', false, 'customer', false, 45);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('7885025709', 'eshottonl', 'Eve', 'Shotton', '7AojhQ', 'eshottonl@unicef.org', false, 'customer', false, 56);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('7973058168', 'fsantrym', 'Ferd', 'Santry', 'Itt34Ku', 'fsantrym@usgs.gov', false, 'customer', false, 46);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('0930907131', 'cfalknern', 'Charo', 'Falkner', 'bPmKlrDnSz', 'cfalknern@webnode.com', false, 'customer', false, 48);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('0762920038', 'tfolonino', 'Trisha', 'Folonin', 'QegK0Ulj', 'tfolonino@360.cn', false, 'customer', false, 33);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('6883317892', 'mgrellier0', 'Marris', 'Grellier', 'yUwXjAFIllj', 'mgrellier0@squarespace.com', false, 'manager', false, 38);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('0680485911', 'mshear1', 'Meghan', 'Shear', '3kMDme', 'mshear1@tripod.com', false, 'manager', false, 49);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('4178494324', 'rvaughn2', 'Rutter', 'Vaughn', 'jjQuh8JSHv', 'rvaughn2@multiply.com', false, 'manager', false, 35);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('1367881827', 'rchaikovski3', 'Rozele', 'Chaikovski', 'vto74KOX', 'rchaikovski3@weibo.com', false, 'manager', false, 56);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('8074397376', 'rretallack4', 'Ranique', 'Retallack', 'RKjNbftaTO', 'rretallack4@themeforest.net', false, 'manager', false, 37);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('6674720706', 'rphilliskirk2', 'Ransom', 'Philliskirk', '2XcihVo', 'rphilliskirk2@patch.com', false, 'admin', false, 32);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('3815209984', 'isherburn3', 'Igor', 'Sherburn', 'S9BwkX', 'isherburn3@sina.com.cn', false, 'admin', false, 39);
+insert into user (utaid, username, first_name, last_name, password, email, aacmembership, role, isrevoked, age) values ('1919782292', 'tcoppins4', 'Tomlin', 'Coppins', 'VsgvFjjz', 'tcoppins4@soup.io', false, 'admin', false, 36);
+
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (24, null, '9049513585201514', '2023-08-21', '251');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (17, null, '3117896405524303', '2022-05-27', '751');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (4, null, '5912468984273207', '2020-08-14', '487');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (3, 'Phyllys Ronayne', '6287747833144601', '2023-06-20', '871');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (37, null, '8034683084040589', '2022-09-21', '997');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (17, null, '6026982266964421', '2020-12-17', '782');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (36, null, '8520634956071767', '2019-01-14', '352');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (35, null, '9288801402537430', '2020-04-29', '366');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (33, null, '8678601546831609', '2018-12-30', '482');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (3, null, '7122165993401703', '2022-01-09', '541');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (33, null, '5552969204259236', '2023-05-12', '360');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (13, null, '4254554231378016', '2021-12-23', '288');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (37, null, '0545086678498254', '2022-02-13', '745');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (8, null, '8595805467083861', '2020-09-21', '726');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (15, null, '0846382791127696', '2023-03-08', '615');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (11, null, '1874293713026255', '2019-01-14', '042');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (25, null, '2411342622677001', '2019-11-23', '087');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (18, null, '3290230596259851', '2023-08-01', '452');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (27, null, '3773985520320781', '2021-08-23', '139');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (11, null, '3160255647572874', '2021-06-17', '367');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (22, 'Casper Wise', '7914687528957852', '2021-12-30', '308');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (28, null, '6531515257686816', '2021-12-08', '488');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (19, 'Suzanne Fifield', '8057934501437519', '2023-05-20', '220');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (10, null, '2570120312256636', '2018-12-31', '891');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (32, null, '7745162547400468', '2021-08-27', '561');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (10, null, '4639349029630707', '2019-01-14', '515');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (6, null, '8507233393001932', '2020-08-31', '769');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (7, null, '6999682453288994', '2021-06-29', '433');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (24, 'Lancelot Woloschinski', '3621320121266250', '2023-03-19', '839');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (32, null, '6927616001264504', '2020-11-05', '689');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (6, null, '9206919902793162', '2022-04-07', '137');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (14, null, '2174840947752957', '2021-01-21', '872');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (19, 'Erina Vader', '5380100430192128', '2021-05-15', '667');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (5, 'Yalonda Youings', '7550591243565896', '2019-06-15', '515');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (38, null, '4153899265115944', '2020-12-20', '812');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (25, null, '4974540661062931', '2022-02-04', '765');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (23, null, '9889819078907714', '2019-12-22', '040');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (34, null, '8609398513432974', '2023-03-03', '452');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (25, null, '1656941559571021', '2019-04-19', '436');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (17, null, '5107995764315028', '2021-02-13', '253');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (5, null, '0637264078836422', '2023-02-10', '299');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (26, null, '8721938867398653', '2022-05-09', '890');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (24, null, '4692026395753008', '2022-01-08', '338');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (34, null, '5942930232336674', '2020-01-11', '078');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (12, null, '9431433273335905', '2019-02-22', '728');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (13, null, '0340170411916110', '2019-11-27', '571');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (26, null, '7739976970323807', '2021-03-23', '133');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (25, null, '0236038711977051', '2020-10-01', '916');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (33, null, '7466764564880822', '2020-02-22', '222');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (9, null, '3472570480614113', '2023-01-05', '293');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (18, 'Jacobo Phillpot', '0485443675743020', '2023-08-21', '391');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (5, null, '5938275032411961', '2021-06-01', '208');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (28, null, '9824576304466275', '2023-03-20', '219');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (16, null, '2715203971335006', '2021-04-26', '856');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (4, 'Wendell Sauniere', '0645926602123157', '2022-04-11', '424');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (20, null, '6009913801313500', '2021-05-01', '433');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (5, null, '4633553910850091', '2019-03-21', '851');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (4, 'Felic Oxbrow', '5572812223171366', '2023-04-16', '439');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (38, null, '1359052625710601', '2020-01-01', '554');
+insert into payment (user_id, name_on_card, card_number, card_expires, card_security_code) values (18, null, '7470164433755587', '2022-06-15', '791');
+
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (2, 37, '2018-10-18 15:53:47', '2018-10-22 15:53:47', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (4, 25, '2019-01-02 13:18:39', '2019-01-10 13:18:39', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (4, 36, '2018-12-24 01:11:41', '2019-01-01 01:11:41', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (1, 39, '2018-11-13 07:33:04', '2018-12-09 07:33:04', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (2, 35, '2018-12-26 20:50:21', '2018-12-27 20:50:21', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (9, 4, '2019-06-20 02:12:45', '2019-07-12 02:12:45', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (3, 9, '2018-11-22 13:59:23', '2018-12-09 13:59:23', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (5, 23, '2019-06-15 02:40:22', '2019-07-02 02:40:22', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (1, 1, '2019-08-20 08:33:14', '2019-08-23 08:33:14', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (9, 17, '2019-09-02 08:42:31', '2019-09-07 08:42:31', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (1, 4, '2019-08-29 19:15:57', '2019-09-21 19:15:57', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (9, 36, '2019-09-10 05:02:56', '2019-10-08 05:02:56', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (3, 13, '2018-12-08 20:38:48', '2018-12-20 20:38:48', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (3, 29, '2019-05-10 13:57:12', '2019-06-02 13:57:12', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (6, 4, '2019-02-24 15:52:19', '2019-03-08 15:52:19', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (4, 26, '2019-05-08 16:45:23', '2019-06-04 16:45:23', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (9, 1, '2019-07-25 17:49:14', '2019-07-31 17:49:14', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (1, 33, '2019-08-07 14:51:01', '2019-08-30 14:51:01', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (1, 21, '2018-12-24 00:01:32', '2019-01-16 00:01:32', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (8, 12, '2019-04-29 13:55:26', '2019-05-22 13:55:26', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (3, 23, '2019-06-13 10:05:55', '2019-06-30 10:05:55', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (4, 6, '2019-01-10 11:03:17', '2019-01-23 11:03:17', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (5, 35, '2018-11-04 05:03:11', '2018-11-12 05:03:11', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (8, 22, '2018-10-11 12:40:09', '2018-10-25 12:40:09', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (9, 11, '2019-01-18 19:22:44', '2019-02-04 19:22:44', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (6, 35, '2019-06-01 22:25:16', '2019-06-05 22:25:16', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (8, 17, '2019-09-01 03:36:57', '2019-09-29 03:36:57', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (7, 13, '2019-06-16 14:14:08', '2019-07-16 14:14:08', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (7, 6, '2019-03-16 02:06:19', '2019-04-12 02:06:19', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (5, 35, '2018-12-14 14:37:54', '2019-01-02 14:37:54', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (3, 8, '2019-03-15 21:53:26', '2019-04-11 21:53:26', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (9, 7, '2019-07-24 11:09:55', '2019-07-25 11:09:55', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (7, 40, '2018-12-07 05:14:53', '2018-12-17 05:14:53', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (7, 13, '2019-08-22 15:20:11', '2019-09-05 15:20:11', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (4, 16, '2018-11-28 23:04:32', '2018-12-22 23:04:32', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (2, 18, '2019-04-10 06:45:28', '2019-04-25 06:45:28', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (9, 38, '2019-06-17 10:30:29', '2019-07-17 10:30:29', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (3, 25, '2018-12-30 16:29:50', '2019-01-25 16:29:50', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (4, 22, '2019-06-23 10:09:32', '2019-07-23 10:09:32', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (9, 40, '2019-09-11 07:45:45', '2019-09-23 07:45:45', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (8, 32, '2018-10-05 13:59:19', '2018-10-15 13:59:19', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (4, 20, '2019-05-20 04:38:55', '2019-05-28 04:38:55', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (6, 19, '2018-10-13 11:41:28', '2018-11-10 11:41:28', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (7, 18, '2019-01-17 09:31:15', '2019-01-28 09:31:15', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (9, 21, '2018-11-23 11:13:21', '2018-11-25 11:13:21', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (2, 23, '2019-07-26 17:29:43', '2019-08-11 17:29:43', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (2, 34, '2019-04-25 20:48:25', '2019-05-23 20:48:25', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (7, 12, '2019-03-07 20:58:51', '2019-03-16 20:58:51', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (3, 10, '2018-11-04 20:38:55', '2018-11-26 20:38:55', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (9, 3, '2018-11-25 05:44:48', '2018-12-06 05:44:48', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (6, 14, '2019-06-03 06:23:46', '2019-06-15 06:23:46', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (5, 30, '2019-03-22 03:17:19', '2019-03-26 03:17:19', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (6, 37, '2018-11-16 04:07:50', '2018-12-15 04:07:50', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (5, 11, '2019-01-08 11:20:49', '2019-01-19 11:20:49', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (5, 7, '2019-04-03 14:12:32', '2019-05-03 14:12:32', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (1, 40, '2019-07-21 18:04:26', '2019-08-19 18:04:26', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (4, 28, '2019-02-04 18:25:26', '2019-02-10 18:25:26', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (1, 32, '2018-10-06 07:57:15', '2018-10-11 07:57:15', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (4, 18, '2018-10-06 03:34:46', '2018-10-19 03:34:46', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (5, 31, '2019-04-09 17:40:46', '2019-05-02 17:40:46', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (4, 39, '2019-01-22 14:03:32', '2019-02-01 14:03:32', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (8, 1, '2018-12-07 21:55:18', '2018-12-12 21:55:18', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (6, 39, '2019-08-04 00:38:49', '2019-08-07 00:38:49', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (6, 2, '2019-03-19 23:23:11', '2019-04-10 23:23:11', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (5, 23, '2018-12-03 03:32:10', '2018-12-11 03:32:10', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (6, 19, '2019-03-14 14:38:09', '2019-04-03 14:38:09', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (1, 30, '2019-06-06 21:07:41', '2019-06-19 21:07:41', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (1, 35, '2018-11-14 03:17:07', '2018-12-03 03:17:07', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (1, 17, '2019-03-18 18:54:10', '2019-03-30 18:54:10', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (2, 23, '2018-11-14 00:08:48', '2018-11-17 00:08:48', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (5, 25, '2019-06-22 14:44:08', '2019-06-25 14:44:08', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (6, 14, '2019-07-13 09:33:14', '2019-07-21 09:33:14', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (4, 6, '2019-01-01 02:53:15', '2019-01-21 02:53:15', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (6, 11, '2019-08-29 22:43:23', '2019-08-31 22:43:23', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (6, 15, '2018-10-17 20:07:27', '2018-10-30 20:07:27', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (3, 3, '2018-11-11 17:20:57', '2018-11-22 17:20:57', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (1, 19, '2019-02-06 08:57:51', '2019-02-18 08:57:51', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (7, 31, '2019-07-02 20:20:20', '2019-07-04 20:20:20', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (8, 12, '2019-03-21 08:06:15', '2019-04-09 08:06:15', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (4, 6, '2019-05-30 18:52:21', '2019-06-23 18:52:21', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (6, 34, '2019-04-29 01:48:09', '2019-05-12 01:48:09', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (7, 5, '2019-07-24 12:15:23', '2019-08-04 12:15:23', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (9, 32, '2019-01-09 18:28:38', '2019-01-18 18:28:38', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (1, 28, '2018-11-15 22:58:06', '2018-11-25 22:58:06', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (4, 28, '2019-02-16 07:25:06', '2019-03-06 07:25:06', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (8, 14, '2019-07-11 15:00:27', '2019-08-10 15:00:27', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (3, 17, '2019-04-15 17:30:42', '2019-05-15 17:30:42', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (2, 19, '2019-07-13 11:16:29', '2019-08-11 11:16:29', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (5, 10, '2019-04-16 07:44:40', '2019-04-26 07:44:40', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (1, 26, '2019-01-06 03:12:01', '2019-01-08 03:12:01', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (6, 26, '2019-03-14 00:26:52', '2019-04-04 00:26:52', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (2, 35, '2019-07-19 10:14:27', '2019-08-14 10:14:27', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (4, 18, '2018-11-11 15:19:58', '2018-11-27 15:19:58', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (1, 4, '2018-11-04 07:04:57', '2018-11-16 07:04:57', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (5, 6, '2018-11-12 17:52:35', '2018-12-06 17:52:35', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (9, 29, '2019-01-09 19:40:09', '2019-02-01 19:40:09', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (7, 18, '2018-12-23 13:32:43', '2019-01-22 13:32:43', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (6, 31, '2019-02-05 12:35:46', '2019-02-24 12:35:46', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (1, 1, '2019-06-06 15:19:20', '2019-06-30 15:19:20', false, false, false, false, false);
+insert into reservation (car_id, payment_id, start_time, end_time, hasgps, hasonstar, hassirius, iscanceled, isdeleted) values (7, 20, '2018-10-10 15:50:08', '2018-10-28 15:50:08', false, false, false, false, false);
