@@ -1,3 +1,5 @@
+/*Author: Shimon Rothschild*/
+
 DROP DATABASE IF EXISTS `arlington_auto` ;
 CREATE DATABASE  IF NOT EXISTS `arlington_auto` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `arlington_auto`;
