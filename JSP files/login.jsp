@@ -32,15 +32,13 @@
     </tr>
     </table>
     <input type="submit" value="Login">
+      <table>
+	     <tr>
+	     <td>New User ? <input name="registerBtn" type="submit" value="Register"></td>
+	     </tr>
+	    </table> 
     </form>
 </td>
-</tr>
-</table>
-
-<table>
-<tr>
-<td>New User?</td>
-<td><a href="register.jsp">Register here</a></td>
 </tr>
 </table>
 
