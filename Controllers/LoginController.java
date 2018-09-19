@@ -23,40 +23,46 @@ public class LoginController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();	
-		session.removeAttribute("User"); //clear any attributes from previous pages
-		session.removeAttribute("errorMsgs");
 		
 		String url = "/login.jsp";
 		
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");		
-		
-		User user = new User();
-		user.setUsername(username);
-		user.setPassword(password);		
-		UserErrorMsgs UerrorMsgs = new UserErrorMsgs();		
-		user.verifyUser(user, UerrorMsgs);
-		session.setAttribute("User",user);
-		session.setAttribute("errorMsgs",UerrorMsgs);
+		if (request.getParameter("loginBtn")!=null) //press login button
+		{
+			String username = request.getParameter("username");
+			String password = request.getParameter("password");		
+			
+			User user = new User();
+			user.setUsername(username);
+			user.setPassword(password);		
+			UserErrorMsgs UerrorMsgs = new UserErrorMsgs();		
+			user.verifyUser(user, UerrorMsgs);
+			session.setAttribute("User",user);
+			session.setAttribute("errorMsgs",UerrorMsgs);
 
-		if (UerrorMsgs.getErrorMsg().equals("")) { //username & pw matches
+			if (UerrorMsgs.getErrorMsg().equals("")) { //username & pw matches
+				session.removeAttribute("User");
+				session.removeAttribute("errorMsgs");
+				
+				HttpSession currentSession = request.getSession();							
+				
+				user = UserDAO.getUser(username);				
+				
+				currentSession.setAttribute("currentUser",user);
+				
+				//redirect to appropriate home page based on role
+				String role = user.getRole();
+				if(role.equals("Customer"))
+				  url = "/customerHome.jsp"; 
+				else if(role.equals("Manager"))
+				  url = "/managerHome.jsp";
+				else
+				  url = "/adminHome.jsp";
+			}
+		}
+		else { //register button pressed
 			session.removeAttribute("User");
 			session.removeAttribute("errorMsgs");
-			
-			HttpSession currentSession = request.getSession();							
-			
-			user = UserDAO.getUser(username);				
-			
-			currentSession.setAttribute("currentUser",user);
-			
-			//redirect to appropriate home page based on role
-			String role = user.getRole();
-			if(role.equals("Customer"))
-			  url = "/customerHome.jsp"; 
-			else if(role.equals("Manager"))
-			  url = "/managerHome.jsp";
-			else
-			  url = "/adminHome.jsp";
+			url = "/register.jsp";
 		}
 		
 		getServletContext().getRequestDispatcher(url).forward(request, response);
